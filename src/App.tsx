@@ -5,7 +5,7 @@ import { Info } from 'lucide-react';
 import PathDetails from './components/PathDetails';
 import useTSPStore from './store/tspStore';
 
-function App() {
+const App: React.FC = () => {
   const { cities } = useTSPStore();
 
   return (
@@ -52,4 +52,6 @@ function App() {
       </main>
     </div>
   );
-}
+};
+
+export default App;
