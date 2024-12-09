@@ -2,8 +2,9 @@ import { create } from 'zustand';
 import { City, Connection, TSPState } from '../types';
 import { calculateDistance } from '../utils/pathFinding';
 
-const API_URL = 'https://zaid.pythonanywhere.com';
-
+const API_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://zaid25.pythonanywhere.com'  // Updated to your actual PythonAnywhere domain
+  : 'http://localhost:5000';
 
 const useTSPStore = create<TSPState>((set, get) => ({
   cities: [],
