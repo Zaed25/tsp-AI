@@ -2,10 +2,6 @@ import { create } from 'zustand';
 import { City, Connection, TSPState } from '../types';
 import { calculateDistance } from '../utils/pathFinding';
 
-const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://zaid25.pythonanywhere.com'  // Updated to your actual PythonAnywhere domain
-  : 'http://localhost:5000';
-
 const useTSPStore = create<TSPState>((set, get) => ({
   cities: [],
   connections: [],
@@ -87,7 +83,7 @@ const useTSPStore = create<TSPState>((set, get) => ({
     try {
       startCalculation();
       
-      const response = await fetch(`${API_URL}/api/solve`, {
+      const response = await fetch('/api/solve', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
