@@ -1,6 +1,7 @@
 import CityGraph from './components/CityGraph';
 import CityManager from './components/CityManager';
 import { Info } from 'lucide-react';
+import PathDetails from './components/PathDetails';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
               <CityGraph />
             </div>
           </div>
+          <PathDetails />
         </div>
       </main>
     </div>
