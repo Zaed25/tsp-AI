@@ -89,7 +89,7 @@ const useTSPStore = create<TSPState>((set, get) => ({
     const { cities, startCalculation, setPath } = get();
     
     if (cities.length < 2) {
-      set({ error: 'At least 2 cities are required' });
+      set({ error: 'At least 2 cities are required', isCalculating: false });
       return;
     }
     
@@ -100,21 +100,31 @@ const useTSPStore = create<TSPState>((set, get) => ({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
+        credentials: 'omit',
+        mode: 'cors',
         body: JSON.stringify({ cities }),
       });
       
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to calculate path');
+        const errorData = await response.json().catch(() => ({ error: 'Network error' }));
+        throw new Error(errorData.error || `Server error: ${response.status}`);
       }
       
       const data = await response.json();
+      if (!data.path || !data.pathDetails) {
+        throw new Error('Invalid response from server');
+      }
+      
       setPath(data.path, data.pathDetails);
     } catch (error) {
       console.error('Error finding shortest path:', error);
-      set({ error: error instanceof Error ? error.message : 'An error occurred' });
-      setPath([]);
+      set({ 
+        error: error instanceof Error ? error.message : 'An error occurred',
+        path: [],
+        pathDetails: null
+      });
     } finally {
       set({ isCalculating: false });
     }
