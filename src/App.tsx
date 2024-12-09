@@ -1,9 +1,13 @@
+import React, { Suspense } from 'react';
 import CityGraph from './components/CityGraph';
 import CityManager from './components/CityManager';
 import { Info } from 'lucide-react';
 import PathDetails from './components/PathDetails';
+import useTSPStore from './store/tspStore';
 
 function App() {
+  const { cities } = useTSPStore();
+
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow-sm">
@@ -38,14 +42,14 @@ function App() {
 
           <div className="lg:col-span-3">
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <CityGraph />
+              <Suspense fallback={<div>Loading graph...</div>}>
+                <CityGraph />
+              </Suspense>
             </div>
+            {cities.length > 0 && <PathDetails />}
           </div>
-          <PathDetails />
         </div>
       </main>
     </div>
   );
 }
-
-export default App;

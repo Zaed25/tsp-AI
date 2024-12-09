@@ -12,6 +12,7 @@ const useTSPStore = create<TSPState>((set, get) => ({
   path: [],
   pathDetails: null,
   isCalculating: false,
+  error: null,
 
   addCity: (city: City) => {
     set((state) => {
@@ -24,6 +25,7 @@ const useTSPStore = create<TSPState>((set, get) => ({
       return {
         cities: [...state.cities, city],
         connections: [...state.connections, ...newConnections],
+        error: null,
       };
     });
   },
@@ -36,6 +38,7 @@ const useTSPStore = create<TSPState>((set, get) => ({
       ),
       path: state.path.filter((cityId) => cityId !== id),
       pathDetails: null,
+      error: null,
     }));
   },
 
@@ -58,6 +61,7 @@ const useTSPStore = create<TSPState>((set, get) => ({
           city.id === updatedCity.id ? updatedCity : city
         ),
         connections: newConnections,
+        error: null,
       };
     });
   },
@@ -65,25 +69,29 @@ const useTSPStore = create<TSPState>((set, get) => ({
   addConnection: (connection: Connection) => {
     set((state) => ({
       connections: [...state.connections, connection],
+      error: null,
     }));
   },
 
   setSelectedCity: (id: string | null) => {
-    set({ selectedCity: id });
+    set({ selectedCity: id, error: null });
   },
 
   setPath: (path: string[], details?: PathDetails) => {
-    set({ path, pathDetails: details || null });
+    set({ path, pathDetails: details || null, error: null });
   },
 
   startCalculation: () => {
-    set({ isCalculating: true, pathDetails: null });
+    set({ isCalculating: true, pathDetails: null, error: null });
   },
 
   findShortestPath: async () => {
     const { cities, startCalculation, setPath } = get();
     
-    if (cities.length < 2) return;
+    if (cities.length < 2) {
+      set({ error: 'At least 2 cities are required' });
+      return;
+    }
     
     try {
       startCalculation();
@@ -97,13 +105,15 @@ const useTSPStore = create<TSPState>((set, get) => ({
       });
       
       if (!response.ok) {
-        throw new Error('Failed to calculate path');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to calculate path');
       }
       
       const data = await response.json();
       setPath(data.path, data.pathDetails);
     } catch (error) {
       console.error('Error finding shortest path:', error);
+      set({ error: error instanceof Error ? error.message : 'An error occurred' });
       setPath([]);
     } finally {
       set({ isCalculating: false });

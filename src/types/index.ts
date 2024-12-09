@@ -20,7 +20,7 @@ export interface PathNode {
 }
 
 export interface PathDetails {
-  path: any;
+  path: string[];
   cost: number;
   cityNames: string[];
   exploredPaths: {
@@ -38,6 +38,7 @@ export interface TSPState {
   path: string[];
   pathDetails: PathDetails | null;
   isCalculating: boolean;
+  error: string | null;
   addCity: (city: City) => void;
   removeCity: (id: string) => void;
   updateCity: (city: City) => void;
