@@ -1,4 +1,3 @@
-import React from 'react';
 import CityGraph from './components/CityGraph';
 import CityManager from './components/CityManager';
 import { Info } from 'lucide-react';

@@ -19,18 +19,31 @@ export interface PathNode {
   parent?: PathNode;
 }
 
+export interface PathDetails {
+  path: any;
+  cost: number;
+  cityNames: string[];
+  exploredPaths: {
+    path: string[];
+    cost: number;
+    heuristic: number;
+    total_cost: number;
+  }[];
+}
+
 export interface TSPState {
   cities: City[];
   connections: Connection[];
   selectedCity: string | null;
   path: string[];
+  pathDetails: PathDetails | null;
   isCalculating: boolean;
   addCity: (city: City) => void;
   removeCity: (id: string) => void;
   updateCity: (city: City) => void;
   addConnection: (connection: Connection) => void;
   setSelectedCity: (id: string | null) => void;
-  setPath: (path: string[]) => void;
+  setPath: (path: string[], details?: PathDetails) => void;
   startCalculation: () => void;
   findShortestPath: () => void;
 }

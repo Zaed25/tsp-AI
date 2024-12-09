@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { City, Connection, TSPState } from '../types';
+import { City, Connection, TSPState, PathDetails } from '../types';
 import { calculateDistance } from '../utils/pathFinding';
 
 const useTSPStore = create<TSPState>((set, get) => ({
@@ -7,6 +7,7 @@ const useTSPStore = create<TSPState>((set, get) => ({
   connections: [],
   selectedCity: null,
   path: [],
+  pathDetails: null,
   isCalculating: false,
 
   addCity: (city: City) => {
@@ -31,6 +32,7 @@ const useTSPStore = create<TSPState>((set, get) => ({
         (conn) => conn.from !== id && conn.to !== id
       ),
       path: state.path.filter((cityId) => cityId !== id),
+      pathDetails: null,
     }));
   },
 
@@ -67,12 +69,12 @@ const useTSPStore = create<TSPState>((set, get) => ({
     set({ selectedCity: id });
   },
 
-  setPath: (path: string[]) => {
-    set({ path });
+  setPath: (path: string[], details?: PathDetails) => {
+    set({ path, pathDetails: details || null });
   },
 
   startCalculation: () => {
-    set({ isCalculating: true });
+    set({ isCalculating: true, pathDetails: null });
   },
 
   findShortestPath: async () => {
@@ -96,7 +98,7 @@ const useTSPStore = create<TSPState>((set, get) => ({
       }
       
       const data = await response.json();
-      setPath(data.path);
+      setPath(data.path, data.pathDetails);
     } catch (error) {
       console.error('Error finding shortest path:', error);
       setPath([]);
