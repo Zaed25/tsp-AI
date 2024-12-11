@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { City, Connection, TSPState, PathDetails } from '../types';
 import { calculateDistance } from '../utils/pathFinding';
 
-// Update this to your PythonAnywhere URL
 const API_URL = 'https://zaid25.pythonanywhere.com';
 
 const useTSPStore = create<TSPState>((set, get) => ({
@@ -100,16 +99,12 @@ const useTSPStore = create<TSPState>((set, get) => ({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
         },
-        credentials: 'omit',
-        mode: 'cors',
         body: JSON.stringify({ cities }),
       });
       
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Network error' }));
-        throw new Error(errorData.error || `Server error: ${response.status}`);
+        throw new Error(`Server error: ${response.status}`);
       }
       
       const data = await response.json();
